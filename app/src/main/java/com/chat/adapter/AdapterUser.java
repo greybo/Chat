@@ -1,7 +1,5 @@
 package com.chat.adapter;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,7 +13,7 @@ import com.chat.utils.ChatСonstants;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -45,7 +43,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         User users = list.get(position);
-        holder.text.setText(users.getName().charAt(0));
+        holder.text.setText(String.valueOf(users.getName().charAt(0)).toUpperCase());//
         holder.text2.setText( users.getName());
 
     }
@@ -57,11 +55,11 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private View itemView;
-        @Bind(R.id.text)
+        @BindView(R.id.text)
         TextView text;
-        @Bind(R.id.text2)
+        @BindView(R.id.text2)
         TextView text2;
-        @Bind(R.id.text3)
+        @BindView(R.id.text3)
         TextView text3;
 
         public ViewHolder(View itemView) {
@@ -74,11 +72,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> {
         @Override
         public void onClick(View view) {
             User user = getItem(getPosition());
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(user.getObjectId()));
-            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            itemView.getContext().startActivity(browserIntent);
             handler.obtainMessage(ChatСonstants.HANDLER_USER_OBJ, user).sendToTarget();
-
         }
     }
 }

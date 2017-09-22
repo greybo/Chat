@@ -15,6 +15,8 @@ public class ChatUtil {
     private static final String SAVED_PASS = "pass";
 
     public static void saveAuth(Activity activity, User user) {
+        if (checkAuth(activity))
+            return;
         SharedPreferences sPref = activity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(SAVED_LOGIN, user.getName());

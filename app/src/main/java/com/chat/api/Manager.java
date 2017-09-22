@@ -37,7 +37,7 @@ public class Manager {
 
     public Manager(Handler handler) {
         this.handler = handler;
-        dao=new UserDao(handler);
+        dao = new UserDao(handler);
     }
 
     private RestApi getApi(String url) {
@@ -48,11 +48,10 @@ public class Manager {
         return retrofit.create(RestApi.class);
     }
 
-    public void send(String msg,String token) {
+    public void send(String msg, String token) {
         MyRequestBody body = new MyRequestBody();
-        body.setTo("/topics/news");
-        body.getData().setMessage(msg);
         body.setTo(token);
+        body.getData().setMessage(msg);
 
         String text = gson.toJson(body);
         RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), text);

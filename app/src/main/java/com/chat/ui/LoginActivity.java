@@ -342,7 +342,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (InterruptedException e) {
                 return false;
             }
-            if (DUMMY_CREDENTIALS!=null)
+            if (DUMMY_CREDENTIALS != null)
                 for (String credential : DUMMY_CREDENTIALS) {
                     String[] pieces = credential.split(":");
                     if (pieces[0].equals(mEmail)) {
@@ -359,15 +359,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
+            User user = new User(mEmail, mPassword, FirebaseInstanceId.getInstance().getToken());
             if (success) {
                 Toast.makeText(LoginActivity.this, "Пользователь найден", Toast.LENGTH_LONG).show();
             } else {
 //                mPasswordView.setError(getString(R.string.error_incorrect_password));
 //                mPasswordView.requestFocus();
+                dao.save(user);
                 Toast.makeText(LoginActivity.this, "Пользователь зарегистрирован", Toast.LENGTH_LONG).show();
             }
-            User user = new User(mEmail, mPassword, FirebaseInstanceId.getInstance().getToken());
-            dao.save(user);
             Log.i(TAG, "Auth: " + user.toString());
             ChatUtil.saveAuth(LoginActivity.this, user);
             toMain();
