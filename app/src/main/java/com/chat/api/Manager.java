@@ -3,15 +3,14 @@ package com.chat.api;
 import android.os.Handler;
 import android.util.Log;
 
+import com.chat.dao.ChatDao;
 import com.chat.dao.UserDao;
-import com.chat.entity.MyRequestBody;
+import com.chat.entity.Chat;
+import com.chat.entity.Request;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,14 +29,16 @@ public class Manager {
     private final static String URL_FCM = "https://fcm.googleapis.com/";
     private Retrofit retrofit;
     private Handler handler;
-    private UserDao dao;
+    private ChatDao chatDao;
+    private UserDao userDao;
 
-    private GsonBuilder builder = new GsonBuilder();
-    private Gson gson = builder.create();
+//    private GsonBuilder builder = new GsonBuilder();
+//    private Gson gson = builder.create();
 
     public Manager(Handler handler) {
         this.handler = handler;
-        dao = new UserDao(handler);
+        userDao = new UserDao(handler);
+        chatDao=new ChatDao(handler);
     }
 
     private RestApi getApi(String url) {
@@ -48,27 +49,25 @@ public class Manager {
         return retrofit.create(RestApi.class);
     }
 
-    public void send(String msg, String token) {
-        MyRequestBody body = new MyRequestBody();
-        body.setTo(token);
-        body.getData().setMessage(msg);
-
-        String text = gson.toJson(body);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), text);
-        getApi(URL_FCM).sendToTopic(apiKey, requestBody).enqueue(new Callback<ResponseBody>() {
+    public void send(Request request) {
+        getApi(URL_FCM).sendMsg(apiKey, request).enqueue(new Callback<Request>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<Request> call, Response<Request> response) {
                 Log.i(TAG, "send code: " + response.code() + " body: " + response.body());
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Request> call, Throwable t) {
                 Log.i(TAG, "send onFailure: " + t.getMessage());
             }
         });
     }
 
-    public UserDao getDao() {
-        return dao;
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public ChatDao getChatDao() {
+        return chatDao;
     }
 }

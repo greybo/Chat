@@ -36,10 +36,11 @@ import com.chat.R;
 import com.chat.dao.UserDao;
 import com.chat.entity.User;
 import com.chat.utils.ChatUtil;
-import com.chat.utils.ChatСonstants;
+import com.chat.utils.ChatConst;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -116,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == ChatСonstants.HANDLER_USERS_LIST) {
+            if (msg.what == ChatConst.HANDLER_USERS_LIST) {
                 DUMMY_CREDENTIALS = new ArrayList<>();
                 for (User u : (List<User>) msg.obj)
                     DUMMY_CREDENTIALS.add(u.getName() + ":" + u.getPassword());
@@ -190,7 +191,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -352,15 +353,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
 
             // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-            User user = new User(mEmail, mPassword, FirebaseInstanceId.getInstance().getToken());
+            User user = new User(mEmail, mPassword, FirebaseInstanceId.getInstance().getToken(),new Date().getTime());
             if (success) {
+                dao.update(user);
                 Toast.makeText(LoginActivity.this, "Пользователь найден", Toast.LENGTH_LONG).show();
             } else {
 //                mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -381,7 +383,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void toMain() {
-        ChatUtil.saveAuth(LoginActivity.this, new User());
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();

@@ -10,14 +10,16 @@ public class User {
     private String name;
     private String password;
     private String token;
+    private long lastUpdate;
 
     public User() {
     }
 
-    public User(String name, String password, String token) {
+    public User(String name, String password, String token, long lastUpdate) {
         this.name = name;
         this.password = password;
         this.token = token;
+        this.lastUpdate = lastUpdate;
     }
 
     public User(String name, String password) {
@@ -57,6 +59,13 @@ public class User {
         this.token = token;
     }
 
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 
     public boolean myEquals(Object o) {
         if (this == o) return true;
@@ -83,6 +92,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", token='" + token + '\'' +
+                ", lastUpdate=" + lastUpdate +
                 '}';
     }
 }

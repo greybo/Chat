@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by m on 21.09.2017.
  */
 
-public class MyRequestBody {
+public class Request {
 
     @SerializedName("to")
     @Expose
@@ -34,11 +34,25 @@ public class MyRequestBody {
         this.data = data;
     }
 
+    @Override
+    public String toString() {
+        return "Request{" +
+                "to='" + to + '\'' +
+                ", data=" + data +
+                '}';
+    }
+
     public class Data {
 
         @SerializedName("message")
         @Expose
         private String message;
+        @SerializedName("companionToken")
+        @Expose
+        private String companionToken;
+        @SerializedName("currentName")
+        @Expose
+        private String currentName;
 
         public String getMessage() {
             return message;
@@ -47,6 +61,23 @@ public class MyRequestBody {
         public void setMessage(String message) {
             this.message = message;
         }
-          }
+
+        public String getCompanionToken() {
+            return companionToken;
+        }
+
+        public void setCompanionToken(String companionToken) {
+            this.companionToken = companionToken;
+        }
+
+        public String getCurrentName() {
+            return currentName;
+        }
+
+        public void setCurrentName(String currentName) {
+            this.currentName = currentName;
+        }
+
+    }
 
 }

@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.chat.entity.User;
-import com.chat.utils.ChatСonstants;
+import com.chat.utils.ChatConst;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -13,8 +13,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -32,13 +34,13 @@ public class UserDao extends ObjectDao {
         super(handler);
         if (userRef == null) {
             database = FirebaseDatabase.getInstance();
-            userRef = database.getReference(ChatСonstants.USER_DATABASE_PATH);
+            userRef = database.getReference(ChatConst.USER_DATABASE_PATH);
         }
     }
 
     public void save(User user) {
         if (user == null) {
-            error(ChatСonstants.HANDLER_RESULT_ERR);
+            error(ChatConst.HANDLER_RESULT_ERR);
             return;
         }
         final String key = userRef.push().getKey();
@@ -48,50 +50,76 @@ public class UserDao extends ObjectDao {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    success(ChatСonstants.HANDLER_RESULT_OK, key);
+                    success(ChatConst.HANDLER_RESULT_OK, key);
                 } else {
-                    error(ChatСonstants.HANDLER_RESULT_ERR);
+                    error(ChatConst.HANDLER_RESULT_ERR);
+                }
+            }
+        });
+    }
+
+    public void update(User user) {
+        if (user == null) {
+            error(ChatConst.HANDLER_RESULT_ERR);
+            return;
+        }
+        user.setLastUpdate(new Date().getTime());
+
+
+        if (user.getObjectId() == null) return;
+
+        user.setLastUpdate(new Date().getTime());
+        userRef.child(user.getObjectId())
+                .getRef().setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    success(ChatConst.HANDLER_RESULT_OK);
                 }
             }
         });
     }
 
     public void readAll() {
-        userRef.orderByChild(ChatСonstants.USER_DATABASE_PATH)
+        final String token = FirebaseInstanceId.getInstance().getToken();
+        userRef.orderByChild(ChatConst.USER_DATABASE_PATH)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         List<User> list = new ArrayList<>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             User user = snapshot.getValue(User.class);
-                            if (user != null)
+                            if (user != null && !user.getToken().equals(token))
                                 list.add(user);
                         }
-                        success(ChatСonstants.HANDLER_USERS_LIST, list);
+                        success(ChatConst.HANDLER_USERS_LIST, list);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        error(ChatСonstants.HANDLER_RESULT_ERR);
+                        error(ChatConst.HANDLER_RESULT_ERR);
                     }
                 });
 
     }
 
-    public void findHomeByKey(final String objectId) {
-        Query query = userRef.orderByChild("objectId").equalTo(objectId);
+    public void findUserByToken(final String companionToken, final boolean currentUser) {
+        Query query = userRef.orderByChild("token").equalTo(companionToken);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot s : dataSnapshot.getChildren()) {
                     User user = s.getValue(User.class);
-                    success(ChatСonstants.HANDLER_RESULT_USER, user);
+                    if (currentUser)
+                        success(ChatConst.HANDLER_RESULT_CURRENT_USER, user);
+                    else
+                        success(ChatConst.HANDLER_RESULT_COMPAMION_USER, user);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                error(ChatСonstants.HANDLER_RESULT_ERR);
+                error(ChatConst.HANDLER_RESULT_ERR);
             }
         });
     }

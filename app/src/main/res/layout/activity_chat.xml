@@ -6,29 +6,45 @@
     android:layout_height="match_parent"
     tools:context="com.chat.ui.ChatActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_chat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/textMsg">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <View
+        android:id="@+id/view_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimaryDark"
+        android:layout_alignStart="@+id/textMsg"
+        android:layout_below="@id/recycler_view_chat" />
+    <!--android:layout_alignBottom=""-->
     <EditText
         android:id="@+id/textMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="left"
-        tools:layout_editor_absoluteY="452dp"
-        app:layout_constraintRight_toLeftOf="@+id/sendButton"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_alignTop="@+id/sendButton"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/sendButton" />
+        android:layout_alignTop="@+id/sendButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_toStartOf="@+id/sendButton"
+        android:gravity="left"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/sendButton"
+        tools:layout_editor_absoluteY="452dp" />
 
     <Button
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_gravity="center_horizontal"
         android:text="send"
-        tools:layout_editor_absoluteY="447dp"
         tools:layout_editor_absoluteX="280dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        tools:layout_editor_absoluteY="447dp" />
 </RelativeLayout>
