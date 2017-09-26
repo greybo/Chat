@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("companionToken", (String) msg.obj);
+                    intent.putExtra("token", (String) msg.obj);
                     startActivity(intent);
                     break;
             }

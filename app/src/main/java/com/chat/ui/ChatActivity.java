@@ -8,7 +8,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.chat.R;
 import com.chat.adapter.AdapterChat;
@@ -18,10 +20,9 @@ import com.chat.entity.Request;
 import com.chat.entity.User;
 import com.chat.fcm.MyFirebaseMessagingService;
 import com.chat.utils.ChatConst;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.chat.utils.ChatUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -34,12 +35,15 @@ public class ChatActivity extends AppCompatActivity {
     EditText textMsg;
     @BindView(R.id.recycler_view_chat)
     RecyclerView recyclerView;
-
+    @BindView(R.id.addresses_confirm_root_view)
+    RelativeLayout rootView;
+    private static final String TAG = "log_tag";
     private AdapterChat adapter;
     private Manager managerApi;
     private User currentUser;
     private User companionUser;
-    private String key;
+    private String objectId;
+    private int heightDiff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +52,38 @@ public class ChatActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         managerApi = new Manager(handler);
         if (getIntent().getExtras() != null) {
-            String token = getIntent().getExtras().getString("companionToken", "");
-            managerApi.getUserDao().findUserByToken(token, false);
-            managerApi.getUserDao().findUserByToken(FirebaseInstanceId.getInstance().getToken(), true);
-
+            String token = getIntent().getExtras().getString("token", "");
+            managerApi.getChatDao().pagination(token);
+            managerApi.getUserDao().findUserAll(token);
         }
+        keyboardSensor();
     }
 
-    @OnClick(R.id.sendButton)
+    private void keyboardSensor() {
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff2 = rootView.getRootView().getHeight() - rootView.getHeight();
+                if (heightDiff != heightDiff2) {
+                    if (adapter != null)
+                        ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(adapter.getItemCount() - 1, 0);
+                }
+                heightDiff = heightDiff2;
+            }
+        });
+    }
+
+    @OnClick({R.id.sendButton})
     public void submit(View view) {
-        managerApi.send(prepareSend(textMsg.getText().toString()));
-        textMsg.setText(null);
+        switch (view.getId()) {
+            case R.id.sendButton:
+                String msg = textMsg.getText().toString();
+                if (!msg.isEmpty()) {
+                    managerApi.send(prepareSend(msg));
+                }
+                textMsg.setText(null);
+                break;
+        }
     }
 
     private Handler handler = new Handler() {
@@ -68,39 +93,37 @@ public class ChatActivity extends AppCompatActivity {
             switch (msg.what) {
                 case ChatConst.HANDLER_CHAT_LIST:
                     List<Chat> list = (List<Chat>) msg.obj;
-                    if (list.size() > 0) key = list.get(list.size() - 1).getObjectId();
+                    if (list.size() > 0) objectId = list.get(list.size() - 1).getObjectId();
                     addChatToAdapter(list);
                     break;
                 case ChatConst.HANDLER_RESULT_COMPAMION_USER:
                     companionUser = (User) msg.obj;
-                    getChat();
                     break;
                 case ChatConst.HANDLER_RESULT_CURRENT_USER:
                     currentUser = (User) msg.obj;
-                    getChat();
                     break;
-                case ChatConst.HANDLER_RECIVE_MSG:
-                    String token = (String) msg.obj;
-                    if (companionUser.getToken().equals(token))
-                        managerApi.getChatDao().filterChat(token, key);
+                case ChatConst.HANDLER_RECEIVE_MSG:
+                    Chat chat = (Chat) msg.obj;
+                    if (companionUser.getToken().equals(chat.getCompanionToken()))
+                        addChatToAdapter(chat);
                     break;
             }
         }
     };
 
-    private void getChat() {
-        if (currentUser != null && companionUser != null)
-            managerApi.getChatDao().filterChat(companionUser.getToken(), key);
+    private void addChatToAdapter(final Chat chat) {
+        addChatToAdapter(new ArrayList<Chat>() {{
+            add(chat);
+        }});
     }
 
     private void addChatToAdapter(List<Chat> list) {
         if (adapter != null) {
-            adapter.addList(list);
+            adapter.addAllToAdapter(list);
         } else {
             createAdapter(list);
         }
         ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(adapter.getItemCount() - 1, 0);
-
     }
 
     private void createAdapter(List<Chat> list) {
@@ -111,25 +134,21 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-
-    Chat chat = new Chat();
-
     private Request prepareSend(String msg) {
+        String objectId = managerApi.getChatDao().createObjectId();
+        Chat chat = new Chat();
+        chat.setObjectId(objectId);
+        chat.setMessage(msg);
+        chat.setCurrentToken(companionUser.getToken());
+        chat.setCompanionToken(currentUser.getToken());
+        chat.setLastUpdate(new Date().getTime());
+
+        managerApi.getChatDao().saveOrUpdate(chat);
         Request request = new Request();
         request.setTo(companionUser.getToken());
-        request.getData().setCurrentName(currentUser.getName());
-        request.getData().setMessage(msg);
-        request.getData().setCompanionToken(currentUser.getToken());
+        request.getData().setMessage(ChatUtil.toJson(chat));
 
-        chat.setMessage(msg);
-        chat.setCurrentToken(currentUser.getToken());
-        chat.setCompanionToken(companionUser.getToken());
-        chat.setLastUpdate(new Date().getTime());
-        addChatToAdapter(new ArrayList<Chat>() {{
-            add(chat);
-        }});
-        //TODO
-        managerApi.getChatDao().save(chat);
+        addChatToAdapter(chat);
 
         return request;
     }

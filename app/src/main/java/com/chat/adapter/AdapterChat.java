@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.chat.R;
 import com.chat.entity.Chat;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.List;
 
@@ -20,16 +21,23 @@ import butterknife.ButterKnife;
  */
 
 public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ViewHolder> {
+    private static final String TAG = "log_chat";
     private List<Chat> list;
     private Handler handler;
+    private String currentToken;
 
     public AdapterChat(List<Chat> list, Handler handler) {
         this.list = list;
         this.handler = handler;
-
+        currentToken = FirebaseInstanceId.getInstance().getToken();
     }
 
-    public void addList(List<Chat> list) {
+    @Override
+    public int getItemViewType(int position) {
+        return (currentToken.equals(list.get(position).getCurrentToken())) ? 2 : 1;
+    }
+
+    public void addAllToAdapter(List<Chat> list) {
         this.list.addAll(list);
         notifyDataSetChanged();
     }
@@ -40,16 +48,19 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, parent, false);
+        int layout;
+        if (viewType == 1)
+            layout = R.layout.item_chat2;
+        else
+            layout = R.layout.item_chat;
+        View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Chat chat = list.get(position);
-//        holder.text.setText(String.valueOf(chat.ge().charAt(0)).toUpperCase());
-        holder.text2.setText(chat.getMessage());
-
+        holder.text3.setText(chat.getMessage());
     }
 
     @Override
@@ -58,8 +69,6 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //        @BindView(R.id.text)
-//        TextView text;
         @BindView(R.id.text2)
         TextView text2;
         @BindView(R.id.text3)
@@ -69,6 +78,5 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ViewHolder> {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
-
     }
 }

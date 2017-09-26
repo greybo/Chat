@@ -103,8 +103,13 @@ public class UserDao extends ObjectDao {
 
     }
 
-    public void findUserByToken(final String companionToken, final boolean currentUser) {
-        Query query = userRef.orderByChild("token").equalTo(companionToken);
+    public void findUserAll(final String token) {
+        findUserByToken(token, false);
+        findUserByToken(FirebaseInstanceId.getInstance().getToken(), true);
+    }
+
+    public void findUserByToken(final String token, final boolean currentUser) {
+        Query query = userRef.orderByChild("token").equalTo(token);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -26,7 +26,7 @@ import java.util.List;
 public class ChatDao extends ObjectDao {
     private FirebaseDatabase database;
     private DatabaseReference chatRef;
-//    private String key=null;
+    private String objectId = null;
 
     public ChatDao(Handler handler) {
         super(handler);
@@ -36,24 +36,33 @@ public class ChatDao extends ObjectDao {
         }
     }
 
-    public void save(Chat chat) {
+    public void saveOrUpdate(Chat chat) {
         if (chat == null) {
             error(ChatConst.HANDLER_RESULT_ERR);
             return;
         }
-        final String key = chatRef.push().getKey();
-        chat.setObjectId(key);
 
-        chatRef.child(key).setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {
+        if (chat.getObjectId() == null) {
+            objectId = createObjectId();
+            chat.setObjectId(objectId);
+        } else {
+            objectId = chat.getObjectId();
+        }
+
+        chatRef.child(objectId).setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    success(ChatConst.HANDLER_RESULT_OK, key);
+                    success(ChatConst.HANDLER_RESULT_OK, objectId);
                 } else {
                     error(ChatConst.HANDLER_RESULT_ERR);
                 }
             }
         });
+    }
+
+    public String createObjectId() {
+        return chatRef.push().getKey();
     }
 
     public void findChatByToken(final String companionToken) {
@@ -76,12 +85,20 @@ public class ChatDao extends ObjectDao {
         });
     }
 
-    public void filterChat( String token,final String key) {
-        String token2 = FirebaseInstanceId.getInstance().getToken();
+    public void pagination(String token) {
+        pagination(token, objectId, false);
+    }
+
+    public void pagination(String token, final String objectId) {
+        pagination(token, objectId, false);
+    }
+
+    private void pagination(String token, final String objectId, final boolean startAtCurrent) {
+        final String[] tokens = {FirebaseInstanceId.getInstance().getToken(), token};
         Query query;
         final int limit = 20;
-        if (key != null) {
-            query = chatRef.orderByKey().startAt(key).limitToLast(limit);
+        if (objectId != null) {
+            query = chatRef.orderByKey().startAt(objectId).limitToLast(limit);
         } else {
             query = chatRef.orderByChild(ChatConst.CHAT_DATABASE_PATH).limitToLast(limit);
         }
@@ -91,11 +108,11 @@ public class ChatDao extends ObjectDao {
                 List<Chat> chats = new ArrayList<>();
                 for (DataSnapshot s : dataSnapshot.getChildren()) {
                     Chat chat = s.getValue(Chat.class);
-                    if (key == null || !chat.getObjectId().equals(key)) {
-//                        if (!chat.getCompanionToken().equals(chatTokens.get(ChatConst.)))
-//                            if (!chatTokens.containsKey(ChatConst.) || !chatTokens.containsValue(s.getKey()))
-                        Log.i(ChatConst.TAG,"key: "+chat.getObjectId()+" "+key);
-                                chats.add(chat);
+                    if (objectId == null || (startAtCurrent || !chat.getObjectId().equals(objectId))) {
+                        if (chat.equalsTokens(tokens)) {
+                            Log.i(ChatConst.TAG, "key: " + chat.getObjectId() + " " + objectId);
+                            chats.add(chat);
+                        }
                     }
                 }
                 success(ChatConst.HANDLER_CHAT_LIST, chats);
@@ -106,5 +123,12 @@ public class ChatDao extends ObjectDao {
                 error(ChatConst.HANDLER_RESULT_ERR);
             }
         });
+    }
+
+    public void filterStartAtCurrent(final String token, final String objectId) {
+        if (objectId == null) {
+            return;
+        }
+        pagination(token, objectId, true);
     }
 }

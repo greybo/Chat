@@ -25,8 +25,8 @@ public class Request {
     }
 
     public Data getData() {
-        if (data==null)
-            data=new Data();
+        if (data == null)
+            data = new Data();
         return data;
     }
 
@@ -47,12 +47,6 @@ public class Request {
         @SerializedName("message")
         @Expose
         private String message;
-        @SerializedName("companionToken")
-        @Expose
-        private String companionToken;
-        @SerializedName("currentName")
-        @Expose
-        private String currentName;
 
         public String getMessage() {
             return message;
@@ -61,23 +55,5 @@ public class Request {
         public void setMessage(String message) {
             this.message = message;
         }
-
-        public String getCompanionToken() {
-            return companionToken;
-        }
-
-        public void setCompanionToken(String companionToken) {
-            this.companionToken = companionToken;
-        }
-
-        public String getCurrentName() {
-            return currentName;
-        }
-
-        public void setCurrentName(String currentName) {
-            this.currentName = currentName;
-        }
-
     }
-
 }

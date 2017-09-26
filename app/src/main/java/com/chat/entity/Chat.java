@@ -18,6 +18,9 @@ public class Chat {
     @SerializedName("companionToken")
     @Expose
     private String companionToken;
+    @SerializedName("companionName")
+    @Expose
+    private String companionName;
     @SerializedName("message")
     @Expose
     private String message;
@@ -58,6 +61,22 @@ public class Chat {
         this.companionToken = companionToken;
     }
 
+    public String getCompanionName() {
+        return companionName;
+    }
+
+    public void setCompanionName(String companionName) {
+        this.companionName = companionName;
+    }
+
+    public String getChangesCount() {
+        return changesCount;
+    }
+
+    public void setChangesCount(String changesCount) {
+        this.changesCount = changesCount;
+    }
+
     public String getMessage() {
         return message;
     }
@@ -82,30 +101,24 @@ public class Chat {
         this.lastUpdate = lastUpdate;
     }
 
+    public boolean equalsTokens(String... t) {
+        if (getCompanionToken().equals(t[0]) || getCurrentToken().equals(t[0]))
+            if (getCompanionToken().equals(t[1]) || getCurrentToken().equals(t[1]))
+                return true;
+        return false;
+    }
+
     @Override
     public String toString() {
         return "Chat{" +
                 "objectId='" + objectId + '\'' +
                 ", currentToken='" + currentToken + '\'' +
                 ", companionToken='" + companionToken + '\'' +
+                ", companionName='" + companionName + '\'' +
                 ", message='" + message + '\'' +
+                ", changesCount='" + changesCount + '\'' +
                 ", syncSend=" + syncSend +
                 ", lastUpdate=" + lastUpdate +
                 '}';
-
     }
-//       public  class Data {
-//
-//            @SerializedName("message")
-//            @Expose
-//            private String message;
-//
-//           public String getMessage() {
-//               return message;
-//           }
-//
-//           public void setMessage(String message) {
-//               this.message = message;
-//           }
-//       }
 }

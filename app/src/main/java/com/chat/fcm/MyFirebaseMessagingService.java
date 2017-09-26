@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -11,8 +12,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.chat.R;
+import com.chat.entity.Chat;
 import com.chat.ui.ChatActivity;
 import com.chat.utils.ChatConst;
+import com.chat.utils.ChatUtil;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -22,35 +25,40 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "log_tag";
     private static Handler handler;
+    private Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.i(TAG, "From: " + remoteMessage.getFrom());
         if (remoteMessage.getData().size() > 0) {
             Map<String, String> map = remoteMessage.getData();
-            Log.i(TAG, "Message data payload: " + remoteMessage.getData());
+            String str = map.get("message");
+            Chat chat = ChatUtil.fromJson(str, Chat.class);
+            Log.i(TAG, "Message data payload: " + "\n" + chat);
             if (handler == null)
-                sendNotification(map);
-            else
-                handler.obtainMessage(ChatConst.HANDLER_RECIVE_MSG, map.get("companionToken")).sendToTarget();
+                sendNotification(chat);
+            else {
+                MediaPlayer thePlayer = MediaPlayer.create(getApplicationContext(), defaultSoundUri);
+                thePlayer.start();
+                handler.obtainMessage(ChatConst.HANDLER_RECEIVE_MSG, chat).sendToTarget();
+            }
         }
         if (remoteMessage.getNotification() != null) {
             Log.i(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
     }
 
-    private void sendNotification(Map<String, String> map) {
+    private void sendNotification(Chat chat) {
         Intent intent = new Intent(this, ChatActivity.class);
-        intent.putExtra("companionToken", map.get("companionToken"));
+        intent.putExtra("token", chat.getCompanionToken());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(map.get("companionName"))
-                .setContentText("msg: " + map.get("message"))
+                .setContentTitle(chat.getCompanionName())
+                .setContentText(chat.getMessage())
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
