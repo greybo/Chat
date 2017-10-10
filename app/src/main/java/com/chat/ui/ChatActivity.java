@@ -210,8 +210,8 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void prepareSend(String msg) {
-        Chat chat = new Chat();
         if ((msg != null && msg.length() > 0) || filePaths.size() > 0) {
+            Chat chat = new Chat();
             chat.setMessage(msg);
             chat.setCurrentToken(companionUser.getToken());
             chat.setCompanionToken(currentUser.getToken());
