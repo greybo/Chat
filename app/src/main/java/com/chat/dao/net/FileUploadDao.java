@@ -26,7 +26,7 @@ import java.util.List;
 
 public class FileUploadDao extends ObjectDao {
     private static final String TAG = "log_UploadDao";
-    private static final int PIXEL = 200;
+    private static final int PIXEL = 300;
 
     private List<String> paths;
     private Chat chat;
@@ -98,18 +98,4 @@ public class FileUploadDao extends ObjectDao {
         });
     }
 
-//    private Handler createHandler() {
-//        return new Handler() {
-//            @Override
-//            public void handleMessage(Message msg) {
-//                super.handleMessage(msg);
-//                switch (msg.what) {
-//                    case ChatConst.HANDLER_RESULT_ERR:
-//                        break;
-//                    case ChatConst.IMAGEDAO_RESULT_PATH_OK:
-//                        break;
-//                }
-//            }
-//        };
-//    }
 }

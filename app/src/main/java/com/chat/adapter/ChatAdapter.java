@@ -30,13 +30,13 @@ import butterknife.ButterKnife;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private static final String TAG = "log_chat";
-    private List<Chat> list;
+    private List<Chat> chatList;
     private Handler handler;
     private String currentToken;
     private Context context;
 
     public ChatAdapter(Context context, List<Chat> list, Handler handler) {
-        this.list = list;
+        this.chatList = list;
         this.handler = handler;
         this.context = context;
         currentToken = FirebaseInstanceId.getInstance().getToken();
@@ -45,7 +45,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         int i;
-        Chat chat = list.get(position);
+        Chat chat = chatList.get(position);
         if (currentToken.equals(chat.getCurrentToken())) {
             if (chat.getUrlFile() != null && chat.getUrlFile().size() > 0)
                 i = 3;
@@ -61,12 +61,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     public void addAllToAdapter(List<Chat> list) {
-        this.list.addAll(list);
+        this.chatList.addAll(list);
         notifyDataSetChanged();
     }
 
     public Chat getItem(int position) {
-        return list.get(position);
+        return chatList.get(position);
     }
 
     @Override
@@ -91,8 +91,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Chat chat = list.get(position);
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        Chat chat = chatList.get(position);
         holder.text3.setText(chat.getMessage());
         holder.text2.setText(ChatConst.sdf.format(new Date(chat.getLastUpdate())));
         if (chat.getUrlFile() != null && chat.getUrlFile().size() > 0) {
@@ -115,7 +115,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     Picasso.with(context)
                             .load(path)
                             .placeholder(R.drawable.placeholder)
-                            .resize(120, 120)
+                            .resize(250, 250)
                             .centerCrop()
                             .into(holder.imageView, callback);
                 } else {
@@ -123,18 +123,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     Picasso.with(context)
                             .load(new File(path))
                             .placeholder(R.drawable.placeholder)
-                            .resize(120, 120)
+                            .resize(250, 250)
                             .centerCrop()
                             .into(holder.imageView, callback);
                 }
-
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return chatList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

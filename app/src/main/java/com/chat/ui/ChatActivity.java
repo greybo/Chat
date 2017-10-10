@@ -225,8 +225,8 @@ public class ChatActivity extends AppCompatActivity {
                 filePaths = new ArrayList<>();
             } else {
                 sendFCM(chat);
+                addChatToAdapter(chat);
             }
-            addChatToAdapter(chat);
         }
     }
 
