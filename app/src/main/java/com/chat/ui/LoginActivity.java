@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chat.R;
-import com.chat.dao.UserDao;
+import com.chat.dao.net.UserDao;
 import com.chat.entity.User;
 import com.chat.utils.ChatUtil;
 import com.chat.utils.ChatConst;

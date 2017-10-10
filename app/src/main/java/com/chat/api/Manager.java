@@ -3,14 +3,10 @@ package com.chat.api;
 import android.os.Handler;
 import android.util.Log;
 
-import com.chat.dao.ChatDao;
-import com.chat.dao.UserDao;
-import com.chat.entity.Chat;
+import com.chat.dao.net.ChatDao;
+import com.chat.dao.net.UserDao;
 import com.chat.entity.Request;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,9 +27,6 @@ public class Manager {
     private Handler handler;
     private ChatDao chatDao;
     private UserDao userDao;
-
-//    private GsonBuilder builder = new GsonBuilder();
-//    private Gson gson = builder.create();
 
     public Manager(Handler handler) {
         this.handler = handler;

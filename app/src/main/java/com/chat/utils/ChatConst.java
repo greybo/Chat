@@ -1,5 +1,7 @@
 package com.chat.utils;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by m on 22.09.2017.
  */
@@ -19,7 +21,14 @@ public class ChatConst {
     public final static int HANDLER_RESULT_CURRENT_USER = 10114;
     public final static int HANDLER_RESULT_CHAT = 10115;
     public final static int HANDLER_CHAT_LIST = 10116;
+    public final static int IMAGEDAO_RESULT_PATH_OK = 10117;
+    public final static int ACTION_SELECT_IMAGE = 10118;
+    public final static int ACTION_IMAGE_CAPTURE = 10119;
+    public final static int HANDLER_IMAGE_SAVE_OK = 10120;
 
+    public static final String DATE_PARSE_REG_EXP = "%1$te %1$tm %1$tY";
+    public static final String TIME_PARSE_REG_EXP = "%1$tH:%1$tM";
+    public static final SimpleDateFormat sdf=new SimpleDateFormat("dd MMM HH:mm:ss");
 
 
 }

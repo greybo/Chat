@@ -13,8 +13,10 @@ import com.google.gson.GsonBuilder;
  */
 
 public class ChatUtil {
+
     private static final String SAVED_LOGIN = "login";
     private static final String SAVED_PASS = "pass";
+    private static final String SAVED_LAST_UPDATE ="lastUpdate" ;
 
     public static void saveAuth(Activity activity, User user) {
         SharedPreferences sPref = activity.getPreferences(Context.MODE_PRIVATE);
@@ -29,9 +31,20 @@ public class ChatUtil {
         String userName = sPref.getString(SAVED_LOGIN, null);
         String pass = sPref.getString(SAVED_PASS, null);
         return new User(userName, pass);
-
     }
 
+    public static void saveLastUpdate(Activity activity, long lastUpdate) {
+        SharedPreferences sPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putLong(SAVED_LAST_UPDATE,lastUpdate);
+        ed.commit();
+    }
+
+    public static long loadLastUpdate(Activity activity) {
+        SharedPreferences sPref = activity.getPreferences(Context.MODE_PRIVATE);
+        return sPref.getLong(SAVED_LAST_UPDATE, 0);
+
+    }
     public static boolean checkAuth(Activity activity) {
         User user = loadAuth(activity);
         return user.getName() != null && user.getPassword() != null;

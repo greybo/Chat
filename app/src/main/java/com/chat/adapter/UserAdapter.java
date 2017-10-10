@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.chat.R;
+import com.chat.entity.Chat;
 import com.chat.entity.User;
 import com.chat.utils.ChatConst;
 
@@ -20,18 +21,18 @@ import butterknife.ButterKnife;
  * Created by m on 15.09.2017.
  */
 
-public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> {
-    private List<User> list;
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
+    private List<User> userList;
     private Handler handler;
 
-    public AdapterUser(List<User> list, Handler handler) {
-        this.list = list;
-        this.handler = handler;
 
+    public UserAdapter(List<User> list, Handler handler) {
+        this.userList = list;
+        this.handler = handler;
     }
 
     public User getItem(int position) {
-        return list.get(position);
+        return userList.get(position);
     }
 
     @Override
@@ -42,25 +43,39 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        User users = list.get(position);
-        holder.text.setText(String.valueOf(users.getName().charAt(0)).toUpperCase());
-        holder.text2.setText(users.getName());
+        User user = userList.get(position);
+        holder.textCircle.setText(String.valueOf(user.getName().charAt(0)).toUpperCase());
+        holder.textName.setText(user.getName());
+        if (user.getCountNewPost() != 0){
+            holder.textCount.setVisibility(View.VISIBLE);
+            holder.textCount.setText(user.getCountNewPost() + "");
+        }
 
+    }
+
+    public void setPostsCount(List<Chat> postsCount) {
+        for (Chat c : postsCount) {
+            for (int i = 0; i < userList.size(); i++) {
+                if (userList.get(i).getToken().equals(c.getCompanionToken()) && !c.isRead())
+                    userList.get(i).setCountNewPost(userList.get(i).getCountNewPost() + 1);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return userList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private View itemView;
-        @BindView(R.id.text)
-        TextView text;
-        @BindView(R.id.text2)
-        TextView text2;
-        @BindView(R.id.text3)
-        TextView text3;
+        @BindView(R.id.textCircle)
+        TextView textCircle;
+        @BindView(R.id.textName)
+        TextView textName;
+        @BindView(R.id.textCount)
+        TextView textCount;
 
         public ViewHolder(View itemView) {
             super(itemView);

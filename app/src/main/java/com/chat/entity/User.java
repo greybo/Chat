@@ -10,6 +10,7 @@ public class User {
     private String name;
     private String password;
     private String token;
+    private int countNewPost;
     private long lastUpdate;
 
     public User() {
@@ -61,6 +62,14 @@ public class User {
 
     public long getLastUpdate() {
         return lastUpdate;
+    }
+
+    public int getCountNewPost() {
+        return countNewPost;
+    }
+
+    public void setCountNewPost(int countNewPost) {
+        this.countNewPost = countNewPost;
     }
 
     public void setLastUpdate(long lastUpdate) {

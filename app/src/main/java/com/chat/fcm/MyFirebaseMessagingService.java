@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.chat.R;
+
 import com.chat.entity.Chat;
 import com.chat.ui.ChatActivity;
 import com.chat.utils.ChatConst;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "log_tag";
+    private static final String TAG = "log_fcm";
     private static Handler handler;
     private Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
@@ -53,7 +54,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("token", chat.getCompanionToken());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                0);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)

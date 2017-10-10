@@ -1,17 +1,23 @@
 package com.chat.entity;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by m on 21.09.2017.
  */
 
-public class Chat {
-
+public class Chat {//extends RealmObject //extends BaseDaoEnabled
     @SerializedName("objectId")
     @Expose
+//    @PrimaryKey
+//    @Required
     private String objectId;
+
     @SerializedName("currentToken")
     @Expose
     private String currentToken;
@@ -24,12 +30,18 @@ public class Chat {
     @SerializedName("message")
     @Expose
     private String message;
+    @SerializedName("urlFile")
+    @Expose
+    private List<String> urlFile;
     @SerializedName("changesCount")
     @Expose
     private String changesCount;
     @SerializedName("syncSend")
     @Expose
     private boolean syncSend;
+    @SerializedName("isRead")
+    @Expose
+    private boolean isRead;
     @SerializedName("lastUpdate")
     @Expose
     private long lastUpdate;
@@ -85,12 +97,40 @@ public class Chat {
         this.message = message;
     }
 
+    public List<String> getUrlFile() {
+        return urlFile;
+    }
+
+    public void setUrlFile(List<String> urlFile) {
+        this.urlFile = urlFile;
+    }
+
+    public void addUrlFile(String url) {
+        if (urlFile == null)
+            urlFile = new ArrayList<>();
+        urlFile.add(url);
+    }
+
+    public void addAllUrlFile(List<String> urls) {
+        if (urlFile == null)
+            urlFile = new ArrayList<>();
+        urlFile.addAll(urls);
+    }
+
     public boolean isSyncSend() {
         return syncSend;
     }
 
     public void setSyncSend(boolean syncSend) {
         this.syncSend = syncSend;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 
     public long getLastUpdate() {
@@ -101,10 +141,22 @@ public class Chat {
         this.lastUpdate = lastUpdate;
     }
 
-    public boolean equalsTokens(String... t) {
-        if (getCompanionToken().equals(t[0]) || getCurrentToken().equals(t[0]))
-            if (getCompanionToken().equals(t[1]) || getCurrentToken().equals(t[1]))
+    public boolean equalsTokens() {
+        return equalsTokens(null);
+    }
+
+    public boolean equalsTokens(String... tokens) {
+        String currentToken = FirebaseInstanceId.getInstance().getToken();
+        if ((getCompanionToken().equals(currentToken) || getCurrentToken().equals(currentToken))) {
+            if (tokens == null) {
                 return true;
+            } else {
+                for (String t : tokens) {
+                    if (getCompanionToken().equals(t) || getCurrentToken().equals(t)) ;
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

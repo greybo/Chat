@@ -8,10 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.chat.R;
-import com.chat.adapter.AdapterUser;
-import com.chat.api.Manager;
+import com.chat.adapter.UserAdapter;
+import com.chat.dao.net.ChatDao;
+import com.chat.dao.net.UserDao;
+//import com.chat.userDao.local.ChatRealm;
+import com.chat.entity.Chat;
 import com.chat.entity.User;
 import com.chat.utils.ChatConst;
 
@@ -19,22 +23,24 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "log_tag";
-    private Manager managerApi;
+    //    private static final String TAG = ChatConst.TAG;
+    private ChatDao chatDao;
+    private UserDao userDao;
     private RecyclerView recyclerView;
-    private AdapterUser adapter;
+    private UserAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_user);
-        managerApi = new Manager(handler);
-
+        userDao = new UserDao(handler);
+        chatDao = new ChatDao(handler);
     }
 
     private void createAdapter(List<User> list) {
-        adapter = new AdapterUser(list, handler);
+        adapter = new UserAdapter(list, handler);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -51,11 +57,14 @@ public class MainActivity extends AppCompatActivity {
                     createAdapter(list);
                     break;
                 case ChatConst.HANDLER_USER_OBJ:
-
                     Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra("token", (String) msg.obj);
                     startActivity(intent);
+                    break;
+                case ChatConst.HANDLER_CHAT_LIST:
+                    adapter.setPostsCount((List<Chat>) msg.obj);
+
                     break;
             }
         }
@@ -70,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        managerApi.getUserDao().readAll();
+        userDao.readAll();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        chatRealm.onDestroy();
     }
 }

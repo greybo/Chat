@@ -20,19 +20,19 @@ public abstract class ObjectDao {
         }
     }
 
-    void success(int whatForHandler, Object key) {
+    public void success(int whatForHandler, Object key) {
         if (handler != null) {
             Message msg = handler.obtainMessage(whatForHandler, key);
             handler.sendMessage(msg);
         }
     }
 
-    void success(int whatForHandler) {
+    public void success(int whatForHandler) {
         if (handler != null)
             handler.sendEmptyMessage(whatForHandler);
     }
 
-    void error(int whatForHandler) {
+    public void error(int whatForHandler) {
         handler.sendEmptyMessage(whatForHandler);
     }
 

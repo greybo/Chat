@@ -1,8 +1,9 @@
-package com.chat.dao;
+package com.chat.dao.net;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
+import com.chat.dao.ObjectDao;
 import com.chat.entity.User;
 import com.chat.utils.ChatConst;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -64,8 +65,6 @@ public class UserDao extends ObjectDao {
             return;
         }
         user.setLastUpdate(new Date().getTime());
-
-
         if (user.getObjectId() == null) return;
 
         user.setLastUpdate(new Date().getTime());
