@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chat.R;
+import com.chat.dao.net.ChatDao;
 import com.chat.entity.Chat;
 import com.chat.utils.ChatConst;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -98,6 +99,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         final Chat chat = chatList.get(position);
         holder.text3.setText(chat.getMessage());
         holder.text2.setText(ChatConst.sdf.format(new Date(chat.getLastUpdate())));
+        if (!chat.isRead() && FirebaseInstanceId.getInstance().getToken().equals(chat.getCurrentToken())) {
+            chat.setRead(true);
+            new ChatDao(handler).updateByObject(chat);
+            Log.i("log_tag", "!chat.isRead(): " + chat.getObjectId());
+        }
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

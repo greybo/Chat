@@ -46,7 +46,7 @@ public class ChatDao extends ObjectDao {
             error(ChatConst.HANDLER_RESULT_ERR);
             return;
         }
-      final String objectId = chatRef.push().getKey();
+        final String objectId = chatRef.push().getKey();
         chat.setObjectId(objectId);
         chatRef.child(objectId).setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -61,13 +61,14 @@ public class ChatDao extends ObjectDao {
     }
 
     public void readAllByObjectId(final String objectId) {
+        int limit=100;
         Query query;
         if (objectId != null) {
             query = chatRef.orderByKey().startAt(objectId);
         } else {
             query = chatRef.orderByChild(ChatConst.CHAT_DATABASE_PATH);
         }
-        query.limitToLast(5);
+        query.limitToLast(limit);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -90,15 +91,16 @@ public class ChatDao extends ObjectDao {
         });
     }
 
-    public void readAllByToken(final String companionToken,final String objectId) {
+    public void readAllByToken(final String companionToken, final String objectId) {
+        int limit=100;
         final List<Chat> list = new ArrayList<>();
         Query query;
-//        if (objectId != null) {
-//            query = chatRef.orderByKey().endAt(objectId);
-//        } else {
+        if (objectId != null) {
+            query = chatRef.orderByKey().endAt(objectId);
+        } else {
             query = chatRef.orderByChild(ChatConst.CHAT_DATABASE_PATH);
-//        }
-//        query.limitToLast(5);
+        }
+        query.limitToLast(limit);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -127,12 +129,13 @@ public class ChatDao extends ObjectDao {
     public void updateByObject(final Chat chat) {
         if (chat.getObjectId() == null) return;
 
-        chat.setLastUpdate(new Date().getTime());
+//        chat.setLastUpdate(new Date().getTime());
         chatRef.child(chat.getObjectId())
                 .getRef().setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
+                    Log.i("log_chatDao","updateByObject ok");
                     success(ChatConst.HANDLER_RESULT_OK, chat);
                 }
             }

@@ -64,7 +64,6 @@ public class ChatFragment extends Fragment {
     private static Uri imageUri;
     private String objectId;
     private int heightDiff;
-    //    private List<String> filePaths;
     private int indexPermission;
     private String tokenCompanion;
     private Intent intent;
@@ -88,9 +87,7 @@ public class ChatFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.bind(this, view);
         temp = ((ChatApp) getActivity().getApplication()).getTemp();
-
         managerApi = new Manager(handler);
-//        filePaths = new ArrayList<>();
         if (intent != null) {
             tokenCompanion = intent.getStringExtra("token");
             Log.i(TAG, "click user: " + tokenCompanion);
@@ -103,8 +100,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
     }
 
     private void keyboardSensor() {
@@ -255,7 +250,6 @@ public class ChatFragment extends Fragment {
 
             if (path != null && path.length() > 0) {
                 new FileUploadDao(handler).saveFile(chat);
-//                filePaths = new ArrayList<>();
             } else {
                 sendFCM(chat);
                 addChatToAdapter(chat);

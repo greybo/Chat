@@ -2,6 +2,7 @@ package com.chat.adapter;
 
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,14 +51,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             holder.textCount.setVisibility(View.VISIBLE);
             holder.textCount.setText(user.getCountNewPost() + "");
         }
-
     }
 
     public void setPostsCount(List<Chat> postsCount) {
         for (Chat c : postsCount) {
             for (int i = 0; i < userList.size(); i++) {
-                if (userList.get(i).getToken().equals(c.getCompanionToken()) && !c.isRead())
+                if (userList.get(i).getToken().equals(c.getCompanionToken()) && !c.isRead()){
                     userList.get(i).setCountNewPost(userList.get(i).getCountNewPost() + 1);
+                    Log.i("log_tag", "setPostsCount: "+c.getObjectId());
+                }
             }
         }
         notifyDataSetChanged();

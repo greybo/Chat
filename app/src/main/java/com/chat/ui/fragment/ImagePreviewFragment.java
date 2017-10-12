@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImagePreviewFragment extends Fragment {
+
     private ViewPager viewPager;
     private ImageAdapter adapter;
-    //    private List<String> listPath;
     private int positionSelected;
     private String url;
     private View view;
@@ -35,15 +35,6 @@ public class ImagePreviewFragment extends Fragment {
     private String compToken;
     private ChatDao dao;
     private String objectId;
-
-//    public static ImagePreviewFragment newInstance(ImageAdapter.OnClickListener listener,
-//                                                   ArrayList<String> listPath, boolean isDelete) {
-//        ImagePreviewFragment frg = new ImagePreviewFragment();
-//        frg.listener = listener;
-//        frg.isDelete = isDelete;
-////        frg.listPath = listPath;
-//        return frg;
-//    }
 
     public static ImagePreviewFragment newInstance(String compToken, String url) {
         ImagePreviewFragment frg = new ImagePreviewFragment();
@@ -85,8 +76,8 @@ public class ImagePreviewFragment extends Fragment {
 
     private List<String> getListPath(List<Chat> list) {
         List<String> listPath = new ArrayList<>();
-       int i=0;
-        for (Chat c:list) {
+        int i = 0;
+        for (Chat c : list) {
             if (c.getUrlFile() != null) {
                 listPath.add(c.getUrlFile());
                 if (c.getUrlFile().equals(url))
