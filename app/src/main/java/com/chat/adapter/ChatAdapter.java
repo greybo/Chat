@@ -101,7 +101,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         holder.text2.setText(ChatConst.sdf.format(new Date(chat.getLastUpdate())));
         if (!chat.isRead() && FirebaseInstanceId.getInstance().getToken().equals(chat.getCurrentToken())) {
             chat.setRead(true);
-            new ChatDao(handler).updateByObject(chat);
+            new ChatDao(null).updateByObject(chat);
             Log.i("log_tag", "!chat.isRead(): " + chat.getObjectId());
         }
         holder.imageView.setOnClickListener(new View.OnClickListener() {
