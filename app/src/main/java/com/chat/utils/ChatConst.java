@@ -25,6 +25,7 @@ public class ChatConst {
     public final static int ACTION_SELECT_IMAGE = 10118;
     public final static int ACTION_IMAGE_CAPTURE = 10119;
     public final static int HANDLER_IMAGE_SAVE_OK = 10120;
+    public final static int RECYCLER_LIST_CLICKED = 10121;
 
     public static final String DATE_PARSE_REG_EXP = "%1$te %1$tm %1$tY";
     public static final String TIME_PARSE_REG_EXP = "%1$tH:%1$tM";

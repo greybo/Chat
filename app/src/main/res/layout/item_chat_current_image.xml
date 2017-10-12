@@ -27,9 +27,9 @@
             <ImageView
                 android:id="@+id/imageChat"
                 android:scaleType="centerCrop"
-                android:layout_width="200dp"
-                android:layout_height="200dp" />
-
+                android:layout_width="250dp"
+                android:layout_height="350dp" />
+            <!--android:scaleType="centerCrop"-->
             <TextView
                 android:id="@+id/text3"
                 android:layout_width="wrap_content"

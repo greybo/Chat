@@ -18,6 +18,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import butterknife.ButterKnife;
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private static final String TAG = "log_chat";
     private List<Chat> chatList;
+    private List<String> listPath;
     private Handler handler;
     private String currentToken;
     private Context context;
@@ -39,6 +41,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         this.chatList = list;
         this.handler = handler;
         this.context = context;
+        listPath = new ArrayList<>();
         currentToken = FirebaseInstanceId.getInstance().getToken();
     }
 
@@ -47,12 +50,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         int i;
         Chat chat = chatList.get(position);
         if (currentToken.equals(chat.getCurrentToken())) {
-            if (chat.getUrlFile() != null && chat.getUrlFile().size() > 0)
+            if (chat.getUrlFile() != null && chat.getUrlFile().length() > 0)
                 i = 3;
             else
                 i = 2;
         } else {
-            if (chat.getUrlFile() != null && chat.getUrlFile().size() > 0)
+            if (chat.getUrlFile() != null && chat.getUrlFile().length() > 0)
                 i = 1;
             else
                 i = 0;
@@ -92,43 +95,55 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Chat chat = chatList.get(position);
+        final Chat chat = chatList.get(position);
         holder.text3.setText(chat.getMessage());
         holder.text2.setText(ChatConst.sdf.format(new Date(chat.getLastUpdate())));
-        if (chat.getUrlFile() != null && chat.getUrlFile().size() > 0) {
-            for (String path : chat.getUrlFile()) {
-                Callback callback = new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.i(TAG, "ChatAdapter onSuccess ");
-//                        progress.hideProgress();
-                    }
-
-                    @Override
-                    public void onError() {
-                        Log.i(TAG, "ChatAdapter onError");
-//                        progress.hideProgress();
-                    }
-                };
-                if (path.contains("https://")) {
-//                    progress.showProgress();
-                    Picasso.with(context)
-                            .load(path)
-                            .placeholder(R.drawable.placeholder)
-                            .resize(250, 250)
-                            .centerCrop()
-                            .into(holder.imageView, callback);
-                } else {
-//                    progress.showProgress();
-                    Picasso.with(context)
-                            .load(new File(path))
-                            .placeholder(R.drawable.placeholder)
-                            .resize(250, 250)
-                            .centerCrop()
-                            .into(holder.imageView, callback);
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (chat.getUrlFile() != null) {
+                    handler.obtainMessage(ChatConst.RECYCLER_LIST_CLICKED, chat.getUrlFile()).sendToTarget();
+                    Log.i("log_tag", "position: " + chat.getUrlFile());
                 }
             }
+        });
+
+        if (chat.getUrlFile() != null && chat.getUrlFile().length() > 0) {
+            String path = chat.getUrlFile();
+            listPath.add(path);
+            Callback callback = new Callback() {
+                @Override
+                public void onSuccess() {
+                    Log.i(TAG, "ChatAdapter onSuccess ");
+//                        progress.hideProgress();
+                }
+
+                @Override
+                public void onError() {
+                    Log.i(TAG, "ChatAdapter onError");
+//                        progress.hideProgress();
+                }
+            };
+            if (path.contains("https://")) {
+//                    progress.showProgress();
+                Picasso.with(context)
+                        .load(path)
+                        .resize(150, 250)
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.imageView, callback);
+            } else {
+//                    progress.showProgress();
+                Picasso.with(context)
+                        .load(new File(path))
+                        .resize(150, 250)
+                        .centerCrop()
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.imageView, callback);
+
+            }
         }
+
     }
 
     @Override
@@ -136,7 +151,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return chatList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.text2)
         TextView text2;
         @BindView(R.id.text3)
@@ -147,6 +162,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+
         }
     }
 }

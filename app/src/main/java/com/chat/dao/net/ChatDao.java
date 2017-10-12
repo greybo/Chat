@@ -31,7 +31,7 @@ import java.util.Map;
 public class ChatDao extends ObjectDao {
 
     private DatabaseReference chatRef;
-    private String objectId = null;
+
 
     public ChatDao(Handler handler) {
         super(handler);
@@ -46,7 +46,7 @@ public class ChatDao extends ObjectDao {
             error(ChatConst.HANDLER_RESULT_ERR);
             return;
         }
-        objectId = chatRef.push().getKey();
+      final String objectId = chatRef.push().getKey();
         chat.setObjectId(objectId);
         chatRef.child(objectId).setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -67,6 +67,7 @@ public class ChatDao extends ObjectDao {
         } else {
             query = chatRef.orderByChild(ChatConst.CHAT_DATABASE_PATH);
         }
+        query.limitToLast(5);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -89,15 +90,21 @@ public class ChatDao extends ObjectDao {
         });
     }
 
-    public void readAllByToken(final String companionToken) {
-        final List<Chat>list=new ArrayList<>();
-        Query query = chatRef.orderByChild(ChatConst.CHAT_DATABASE_PATH);
+    public void readAllByToken(final String companionToken,final String objectId) {
+        final List<Chat> list = new ArrayList<>();
+        Query query;
+//        if (objectId != null) {
+//            query = chatRef.orderByKey().endAt(objectId);
+//        } else {
+            query = chatRef.orderByChild(ChatConst.CHAT_DATABASE_PATH);
+//        }
+//        query.limitToLast(5);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot s : dataSnapshot.getChildren()) {
                     Chat chat = s.getValue(Chat.class);
-                    if (chat.equalsTokens(companionToken)){
+                    if (chat.equalsTokens(companionToken)) {//&& (objectId == null || !chat.getObjectId().equals(objectId))
                         list.add(chat);
 //                        Log.i(ChatConst.TAG,"readAllByToken: "+chat.toString());
                     }
@@ -116,6 +123,7 @@ public class ChatDao extends ObjectDao {
     public void updateByMap(String objectId, Map<String, Object> update) {
         chatRef.child(objectId).updateChildren(update);
     }
+
     public void updateByObject(final Chat chat) {
         if (chat.getObjectId() == null) return;
 

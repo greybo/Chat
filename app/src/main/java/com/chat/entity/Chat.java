@@ -32,7 +32,7 @@ public class Chat {//extends RealmObject //extends BaseDaoEnabled
     private String message;
     @SerializedName("urlFile")
     @Expose
-    private List<String> urlFile;
+    private String urlFile;
     @SerializedName("changesCount")
     @Expose
     private String changesCount;
@@ -97,24 +97,12 @@ public class Chat {//extends RealmObject //extends BaseDaoEnabled
         this.message = message;
     }
 
-    public List<String> getUrlFile() {
+    public String getUrlFile() {
         return urlFile;
     }
 
-    public void setUrlFile(List<String> urlFile) {
+    public void setUrlFile(String urlFile) {
         this.urlFile = urlFile;
-    }
-
-    public void addUrlFile(String url) {
-        if (urlFile == null)
-            urlFile = new ArrayList<>();
-        urlFile.add(url);
-    }
-
-    public void addAllUrlFile(List<String> urls) {
-        if (urlFile == null)
-            urlFile = new ArrayList<>();
-        urlFile.addAll(urls);
     }
 
     public boolean isSyncSend() {
@@ -152,7 +140,7 @@ public class Chat {//extends RealmObject //extends BaseDaoEnabled
                 return true;
             } else {
                 for (String t : tokens) {
-                    if (getCompanionToken().equals(t) || getCurrentToken().equals(t)) ;
+                    if (getCompanionToken().equals(t) || getCurrentToken().equals(t))
                     return true;
                 }
             }

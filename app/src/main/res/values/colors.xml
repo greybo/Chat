@@ -8,5 +8,6 @@
     <color name="green">#c7f9b6</color>
     <color name="yellow">#efeb94</color>
     <color name="black">#020202</color>
-
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="navigationBarColor">#000000</color>
 </resources>

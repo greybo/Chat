@@ -28,7 +28,7 @@ public class FileUploadDao extends ObjectDao {
     private static final String TAG = "log_UploadDao";
     private static final int PIXEL = 300;
 
-    private List<String> paths;
+    //    private List<String> paths;
     private Chat chat;
     private ChatDao chatDao;
     private FirebaseStorage storage;
@@ -44,24 +44,23 @@ public class FileUploadDao extends ObjectDao {
     }
 
     public void saveFile(Chat chat) {
-        if (chat.getUrlFile() != null && chat.getUrlFile().size() > 0) {
+        if (chat.getUrlFile() != null && chat.getUrlFile().length() > 0) {
             this.chat = chat;
-            paths = new ArrayList<>();
-            for (String path : chat.getUrlFile()) {
-                Log.i(TAG, "saveFile: " + path);
-                Uri uri = Uri.parse(path);
-                Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(path, PIXEL, PIXEL);
-                if (bitmap==null)
-                    Log.i(TAG, "bitmap = null: ");
-                saveBitmap(bitmap, chat.getObjectId() + "-" + uri.getLastPathSegment());
-            }
+            String path = chat.getUrlFile();
+            Log.i(TAG, "saveFile: " + path);
+            Uri uri = Uri.parse(path);
+            Bitmap bitmap = ImageUtil.decodeSampledBitmapFromResource(path, PIXEL, PIXEL);
+            if (bitmap == null)
+                Log.i(TAG, "bitmap = null: ");
+            saveBitmap(chat, bitmap, chat.getObjectId() + "-" + uri.getLastPathSegment());
         }
+
     }
 
-    private void saveBitmap(Bitmap bitmap, String nameImage) {
-        if (bitmap==null){
-            if (chat.getUrlFile().get(0).contains("http"))
-                success(ChatConst.HANDLER_IMAGE_SAVE_OK,chat);
+    private void saveBitmap(final Chat chat, Bitmap bitmap, String nameImage) {
+        if (bitmap == null) {
+            if (chat.getUrlFile().contains("http"))
+                success(ChatConst.HANDLER_IMAGE_SAVE_OK, chat);
             return;
         }
         final String path = "image-" + nameImage;
@@ -86,14 +85,13 @@ public class FileUploadDao extends ObjectDao {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 final String path = taskSnapshot.getMetadata().getDownloadUrl().toString();
-                paths.add(path);
-                if (paths.size() == chat.getUrlFile().size()) {
-                    chatDao.updateByMap(chat.getObjectId(), new HashMap<String, Object>() {{
-                        put("urlFile", paths);
-                    }});
-                    chat.setUrlFile(paths);
-                    success(ChatConst.HANDLER_IMAGE_SAVE_OK,chat);
-                }
+                chat.setUrlFile(path);
+                chatDao.updateByMap(chat.getObjectId(), new HashMap<String, Object>() {{
+                    put("urlFile", path);
+                }});
+                chat.setUrlFile(path);
+                success(ChatConst.HANDLER_IMAGE_SAVE_OK, chat);
+
             }
         });
     }

@@ -2,6 +2,7 @@ package com.chat;
 
 import android.app.Application;
 
+import com.chat.entity.TempConfig;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
@@ -9,6 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class ChatApp extends Application {
+    private TempConfig temp;
 
     @Override
     public void onCreate() {
@@ -19,5 +21,12 @@ public class ChatApp extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+    }
+
+    public TempConfig getTemp() {
+        if (temp == null)
+            temp = new TempConfig();
+
+        return temp;
     }
 }

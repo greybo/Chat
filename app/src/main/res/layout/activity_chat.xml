@@ -7,60 +7,97 @@
     android:layout_height="match_parent"
     tools:context="com.chat.ui.ChatActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_chat"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/layoutSend">
-
-    </android.support.v7.widget.RecyclerView>
-
-    <View
-        android:id="@+id/view_line"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_above="@+id/layoutSend"
-        android:background="@color/grey" />
-
-    <LinearLayout
-        android:id="@+id/layoutSend"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <ImageView
-            android:id="@+id/imageGallery"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/gallery" />
-
-        <ImageView
-            android:id="@+id/imageCamera"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/photo_camera" />
-
-        <EditText
-            android:id="@+id/textMsg"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="10" />
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#00000000"
-            android:text="send"
-            android:textColor="@color/colorPrimaryDark" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/containerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appbar">
+
+    </FrameLayout>
+    <!--<android.support.v7.widget.RecyclerView-->
+    <!--android:id="@+id/recycler_view_chat"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_above="@+id/layoutSend">-->
+
+    <!--</android.support.v7.widget.RecyclerView>-->
+
+    <!--<View-->
+    <!--android:id="@+id/view_line"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="2dp"-->
+    <!--android:layout_above="@+id/layoutSend"-->
+    <!--android:background="@color/grey" />-->
+
+    <!--<LinearLayout-->
+    <!--android:id="@+id/layoutSend"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<ImageView-->
+    <!--android:id="@+id/imageGallery"-->
+    <!--android:layout_width="25dp"-->
+    <!--android:layout_height="25dp"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:src="@drawable/gallery" />-->
+
+    <!--<ImageView-->
+    <!--android:id="@+id/imageCamera"-->
+    <!--android:layout_width="25dp"-->
+    <!--android:layout_height="25dp"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:src="@drawable/photo_camera" />-->
+
+    <!--<EditText-->
+    <!--android:id="@+id/textMsg"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_weight="10" />-->
+
+    <!--<Button-->
+    <!--android:id="@+id/sendButton"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="#00000000"-->
+    <!--android:text="send"-->
+    <!--android:textColor="@color/colorPrimaryDark" />-->
+    <!--</LinearLayout>-->
 
 </RelativeLayout>

@@ -23,12 +23,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    //    private static final String TAG = ChatConst.TAG;
+    private static final String TAG = "log_main";//ChatConst.TAG;
     private ChatDao chatDao;
     private UserDao userDao;
     private RecyclerView recyclerView;
     private UserAdapter adapter;
-
+    private String objectId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +63,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case ChatConst.HANDLER_CHAT_LIST:
-                    adapter.setPostsCount((List<Chat>) msg.obj);
-
+                    List<Chat> list1 = (List<Chat>) msg.obj;
+                    if (list1.size() > 0){
+                        adapter.setPostsCount(list1);
+                        objectId = list1.get(list1.size() - 1).getObjectId();
+                    }
                     break;
             }
         }
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         userDao.readAll();
+        chatDao.readAllByObjectId(objectId);
     }
 
     @Override
