@@ -2,35 +2,37 @@ package com.chat.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 public class PermissionUtil {
     public static final String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
     public static final int PERMISSION_REQUEST_CODE_AUDIO_ACTIVITY = 1101;
 
-    public static boolean checkPermission(Activity activity, String permission) {
+    public static boolean checkPermission(Fragment fragment, String permission) {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (PermissionUtil.isPermissionGranted(activity, permission)) {
+            if (PermissionUtil.isPermissionGranted(fragment.getContext(), permission)) {
                 // Permission Granted Already
                 return true;
             }
             // Request Permission
-            PermissionUtil.requestPermissionActivity(activity, permission);
+            PermissionUtil.requestPermissionActivity(fragment, permission);
         } else {
             return true;
         }
         return false;
     }
 
-    public static void requestPermissionActivity(Activity activity, String permission) {
-        ActivityCompat.requestPermissions(activity, new String[]{permission}, PERMISSION_REQUEST_CODE_AUDIO_ACTIVITY);
+    public static void requestPermissionActivity(Fragment fragment, String permission) {
+        fragment.requestPermissions( new String[]{permission}, PERMISSION_REQUEST_CODE_AUDIO_ACTIVITY);
     }
 
-    public static boolean isPermissionGranted(Activity activity, String permission) {
-        int result = ContextCompat.checkSelfPermission(activity, permission);
+    public static boolean isPermissionGranted(Context context, String permission) {
+        int result = ContextCompat.checkSelfPermission(context, permission);
         if (result == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
@@ -38,9 +40,9 @@ public class PermissionUtil {
         }
     }
 
-    public static boolean checkShouldShowRequestPermission(Activity activity, String permission) {
+    public static boolean checkShouldShowRequestPermission(Fragment fragment, String permission) {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (activity.shouldShowRequestPermissionRationale(permission)) {
+            if (fragment.shouldShowRequestPermissionRationale(permission)) {
                 return true;
             }
 //        }

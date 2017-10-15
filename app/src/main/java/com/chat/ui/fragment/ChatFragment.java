@@ -125,12 +125,12 @@ public class ChatFragment extends Fragment {
                 break;
             case R.id.imageGallery:
                 indexPermission = 0;
-                if (PermissionUtil.checkPermission(getActivity(), PermissionUtil.PERMISSIONS[indexPermission]))
+                if (PermissionUtil.checkPermission(ChatFragment.this, PermissionUtil.PERMISSIONS[indexPermission]))
                     startAction();
                 break;
             case R.id.imageCamera:
                 indexPermission = 1;
-                if (PermissionUtil.checkPermission(getActivity(), PermissionUtil.PERMISSIONS[indexPermission]))
+                if (PermissionUtil.checkPermission(ChatFragment.this, PermissionUtil.PERMISSIONS[indexPermission]))
                     startAction();
                 break;
         }
@@ -272,7 +272,7 @@ public class ChatFragment extends Fragment {
                 && PermissionUtil.isPermissionGranted(getActivity(), permissions[0])) {
             startAction();
         } else {
-            if (PermissionUtil.checkShouldShowRequestPermission(getActivity(), permissions[0])) {
+            if (PermissionUtil.checkShouldShowRequestPermission(this, permissions[0])) {
                 Toast.makeText(getActivity(), "Permission deferred", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_LONG).show();
