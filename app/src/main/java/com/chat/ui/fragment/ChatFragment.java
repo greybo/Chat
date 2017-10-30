@@ -268,7 +268,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PermissionUtil.PERMISSION_REQUEST_CODE_AUDIO_ACTIVITY
+        if (requestCode == PermissionUtil.PERMISSION_REQUEST_CODE
                 && PermissionUtil.isPermissionGranted(getActivity(), permissions[0])) {
             startAction();
         } else {

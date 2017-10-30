@@ -34,12 +34,12 @@ public class Manager {
         chatDao=new ChatDao(handler);
     }
 
-    private RestApi getApi(String url) {
+    private FcmApi getApi(String url) {
         retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        return retrofit.create(RestApi.class);
+        return retrofit.create(FcmApi.class);
     }
 
     public void send(Request request) {

@@ -13,7 +13,7 @@ import retrofit2.http.POST;
  * Created by m on 22.09.2017.
  */
 
-public interface RestApi {
+public interface FcmApi {
 
     @Headers({
             "Content-Type:application/json"
