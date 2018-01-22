@@ -8,6 +8,8 @@ import com.chat.entity.User;
 import com.chat.utils.ChatConst;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +46,9 @@ public class UserDao extends ObjectDao {
             error(ChatConst.HANDLER_RESULT_ERR);
             return;
         }
-        final String key = userRef.push().getKey();
+
+        final String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         user.setObjectId(key);
 
         userRef.child(key).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
