@@ -30,6 +30,6 @@ public class ChatConst {
     public static final String DATE_PARSE_REG_EXP = "%1$te %1$tm %1$tY";
     public static final String TIME_PARSE_REG_EXP = "%1$tH:%1$tM";
     public static final SimpleDateFormat sdf=new SimpleDateFormat("dd MMM HH:mm:ss");
-
+    public static final String USER_FCM_TOKEN = "token";
 
 }

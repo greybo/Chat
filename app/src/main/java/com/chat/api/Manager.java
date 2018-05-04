@@ -12,6 +12,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 
 /**
  * Created by m on 20.09.2017.
@@ -34,16 +38,16 @@ public class Manager {
         chatDao=new ChatDao(handler);
     }
 
-    private FcmApi getApi(String url) {
+    private FcmApi getApi() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(url)
+                .baseUrl(URL_FCM)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         return retrofit.create(FcmApi.class);
     }
 
     public void send(Request request) {
-        getApi(URL_FCM).sendMsg(apiKey, request).enqueue(new Callback<Request>() {
+        getApi().sendMsg(apiKey, request).enqueue(new Callback<Request>() {
             @Override
             public void onResponse(Call<Request> call, Response<Request> response) {
                 Log.i(TAG, "send code: " + response.code() + " body: " + response.body());
@@ -62,5 +66,17 @@ public class Manager {
 
     public ChatDao getChatDao() {
         return chatDao;
+    }
+
+     interface FcmApi {
+
+        @Headers({
+                "Content-Type:application/json"
+        })
+        @POST("fcm/send")
+        Call<Request> sendMsg(
+                @Header("Authorization") String serverKey,
+                @Body Request body);
+
     }
 }

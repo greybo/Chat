@@ -129,10 +129,6 @@ public class Chat {//extends RealmObject //extends BaseDaoEnabled
         this.lastUpdate = lastUpdate;
     }
 
-    public boolean equalsTokens() {
-        return equalsTokens(null);
-    }
-
     public boolean equalsTokens(String... tokens) {
         String currentToken = FirebaseInstanceId.getInstance().getToken();
         if ((getCompanionToken().equals(currentToken) || getCurrentToken().equals(currentToken))) {

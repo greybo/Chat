@@ -16,16 +16,10 @@ public class User {
     public User() {
     }
 
-    public User(String name, String password, String token, long lastUpdate) {
+    public User(String name, String token, long lastUpdate) {
         this.name = name;
-        this.password = password;
         this.token = token;
         this.lastUpdate = lastUpdate;
-    }
-
-    public User(String name, String password) {
-        this.name = name;
-        this.password = password;
     }
 
     public String getObjectId() {

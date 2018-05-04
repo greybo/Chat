@@ -20,6 +20,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -81,6 +82,9 @@ public class UserDao extends ObjectDao {
                 }
             }
         });
+    }
+    public void updateByMap(String objectId, HashMap<String, Object> update) {
+        userRef.child(objectId).updateChildren(update);
     }
 
     public void readAll() {

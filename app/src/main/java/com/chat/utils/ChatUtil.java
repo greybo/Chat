@@ -45,13 +45,6 @@ public class ChatUtil {
         ed.commit();
     }
 
-    public static User loadAuth(Activity activity) {
-        SharedPreferences sPref = activity.getPreferences(Context.MODE_PRIVATE);
-        String userName = sPref.getString(SAVED_LOGIN, null);
-        String pass = sPref.getString(SAVED_PASS, null);
-        return new User(userName, pass);
-    }
-
     public static void saveLastUpdate(Activity activity, long lastUpdate) {
         SharedPreferences sPref = activity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
@@ -63,11 +56,6 @@ public class ChatUtil {
         SharedPreferences sPref = activity.getPreferences(Context.MODE_PRIVATE);
         return sPref.getLong(SAVED_LAST_UPDATE, 0);
 
-    }
-
-    public static boolean checkAuth(Activity activity) {
-        User user = loadAuth(activity);
-        return user.getName() != null && user.getPassword() != null;
     }
 
     public static String toJson(Object o) {
